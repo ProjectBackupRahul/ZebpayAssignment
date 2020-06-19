@@ -44,7 +44,7 @@ app.use(bodyParser.json());
           });
               newData
                 .save()
-                .then(user => res.json(data))
+                .then(data => res.json(data))
                 .catch(err => console.log(err));
         }
       });
