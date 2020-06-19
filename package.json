@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Zebpay Assisnment 1",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Rahul",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "env": "0.0.2",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.19",
+    "nodemon": "^2.0.4",
+    "os": "^0.1.1",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "websocket": "^1.0.31"
+  }
+}
