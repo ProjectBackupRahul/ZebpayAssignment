@@ -88,7 +88,8 @@ app.post('/data/supply',async(req,res,next) => {
           low = dataList[i].low;
           volume = dataList[i].volume;
           date = dataList[i].date;
-          latestData = `Transaction Id: ${transaction_id},  Opening Price:  ${openingPrice}, Closing Price: ${closingPrice}, High: ${high},  Low: ${low},  Volume: ${volume}`;
+          latestData = `Transaction Id: ${transaction_id},  Opening Price:  ${openingPrice}, Closing Price: ${closingPrice}, High: $ data {high},  Low: ${low},  Volume: ${volume}`;
+         // Supplied Hour get data functionality not been implemented Yet
        }
 
      }
