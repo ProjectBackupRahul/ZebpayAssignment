@@ -1,0 +1,29 @@
+<h1>Add Data</h1>
+{{#if error}} <span>{{error}}</span>{{/if}}
+<form method="POST" action="/data/add">
+  <div class="form-group">
+    <label>Transaction ID</label>
+    <input type="text" name="transaction_id" class="form-control" placeholder="Add ID">
+  </div>
+  <div class="form-group">
+    <label>Opening Price</label>
+    <input type="number" name="openingPrice" class="form-control" placeholder="Opening Price">
+  </div>
+  <div class="form-group">
+    <label>Closing Price</label>
+    <input type="number" name="closingPrice" class="form-control" placeholder="Closing Price">
+  </div>
+  <div class="form-group">
+    <label>High</label>
+    <input type="number" name="high" class="form-control" placeholder="High">
+  </div>
+  <div class="form-group">
+    <label>Low</label>
+    <input type="number" name="low" class="form-control" placeholder="Low">
+  </div>
+    <div class="form-group">
+    <label>Volume</label>
+    <input type="number" name="volume" class="form-control" placeholder="Volume">
+  </div>
+  <input type="submit" class="btn btn-primary" value="Save">
+</form>

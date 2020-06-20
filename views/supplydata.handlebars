@@ -1,0 +1,10 @@
+
+<h3>Supply Hour</h3>
+{{#if error}} <span>{{error}}</span>{{/if}}
+<form method="POST" action="/data/supply">
+    <div class="form-group">
+    <label>Supply Hour</label>
+    <input type="number" name="hour" class="form-control" placeholder="Hour">
+  </div>
+  <input type="submit" class="btn btn-primary" value="Supply">
+</form>
