@@ -9,6 +9,12 @@ const methodOverride  =  require('method-override');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+//@ Configuring os for network interfce .
+var os = require('os');
+var ifaces = os.networkInterfaces();
+//@ Configuring os for network interfce
+
 // BodyParser middleware
 // Load User model
 const Data = require("./model/Data");
@@ -28,10 +34,9 @@ app.use(bodyParser.json());
     console.log("Mongo DB Connected ")
   });
 
-
     socket.on('connect', ()=>{
     console.log('Socket Connected ----');
-   
+
     socket.emit('history_singapore/BTC-INR', (data)=>{
     console.log("Received Data",data);
 
@@ -54,53 +59,69 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(methodOverride('_method'));
 
 // @ Route : GET
-// @ Access : Public 
+// @ Access : Public
 // @ Path :/
 app.get('/', (req,res)=>{
    res.render('supplydata');
 });
 
 // @ Route : POST
-// @ Access : Public 
+// @ Access : Public
 // @ Path :/data/search
 app.post('/data/supply',async(req,res,next) => {
   var hour = req.body.hour;
-  var dataList = []
-  var latestData = ""
-  var transaction_id = "", openingPrice = 0, closingPrice = 0, high = 0, low = 0, volume = 0, data ="";
+  var latestPriceList = [];
+  var latestFillQtyList = [];
+  var transaction_id = "", openingPrice = 0, closingPrice = 0, highestPrice = 0, lowestPrice = 0, volume = 0, latestData ="";
   let d = new Date();
   d.setHours(d.getHours() - hour);
-
   console.log(`${hour} Hour back time`, d);
   var dataCollections = await db.collection('datas');
-  dataCollections.find({}).toArray((err, result) => {
-     if (err){
-      res.status(400).json({ transaction_id: "Not found" })
-     }else {
-      result.forEach(datas =>{ 
-        dataList.push(datas);
-  })
-       for(let i=0; i<dataList.length; i++){
-          transaction_id = dataList[i].transaction_id;
-          openingPrice = dataList[i].openingPrice;
-          closingPrice = dataList[i].closingPrice;
-          high = dataList[i].high;
-          low = dataList[i].low;
-          volume = dataList[i].volume;
-          date = dataList[i].date;
-          latestData = `Transaction Id: ${transaction_id},  Opening Price:  ${openingPrice}, Closing Price: ${closingPrice}, High: $ data {high},  Low: ${low},  Volume: ${volume}`;
-         // Supplied Hour get data functionality not been implemented Yet
-       }
+    dataCollections.find({"lastModifiedDate" : { $gt: new Date(d.getTime() - hour*60*60*1000)}
+    }).toArray(function(err , docs){
+    console.log(`Last ${hour} hour latest data count`,docs.length , + '&' + 'Data', docs);
+     if(docs.length<1){
+      res.render('details',{
+        latestData : 'No data found in your time range:'
+    });
+     } else {
 
+      for (let i=0; i<docs.length; i++) {
+        latestPriceList.push(docs[i].fill_price);
+        latestFillQtyList.push(docs[i].fill_qty);
+      }
+        console.log(`Latest Price List Data`, latestPriceList);
+        console.log(`Latest Fill Qty List Data`, latestFillQtyList);
+
+        highestPrice = Math.max(...latestPriceList);
+        lowestPrice = Math.min(...latestPriceList);
+
+        console.log(`Highest Price From Price List ${highestPrice}`);
+        console.log(`Lowest Price From Price List ${lowestPrice}`);
+
+       openingPrice= latestPriceList[0];
+       closingPrice= latestPriceList[latestPriceList.length-1];
+
+       console.log(`OpeningPice: ${openingPrice}`);
+       console.log(`ClosingPice: ${closingPrice}`);
+
+       latestFillQtyList.forEach(sums => {
+       volume += sums;
+       })
+       console.log(`The Volume: ${volume}`);
+
+       latestData = `Open Price: ${openingPrice}, Closing Price: ${closingPrice}, Highest Price: ${highestPrice}, Lowest Price: ${lowestPrice}, Volume: ${volume}`;
+
+       res.render('details',{
+        latestData : latestData
+    });
      }
-     res.render('details',{
-      latestData : latestData
-  });
-  })
+
+    });
 });
 
 // @ Route : GET
-// @ Access : Public 
+// @ Access : Public
 // @ Path :/data/add
 
   app.get('/data/add', (req,res)=>{
@@ -111,27 +132,27 @@ app.post('/data/supply',async(req,res,next) => {
 // @ Path :/data/add
 
 app.post('/data/add', (req,res,next)=>{
-  let transaction_id = req.body.transaction_id;
-  let openingPrice = req.body.openingPrice;
-  let closingPrice = req.body.closingPrice;
-  let high = req.body.high;
-  let low = req.body.low;
-  let volume = req.body.volume;
+  let trans_id = req.body.trans_id;
+  let fill_qty = req.body.fill_qty;
+  let fill_price = req.body.fill_price;
+  let fill_flags = req.body.fill_flags;
+  let inbound_order_filled = req.body.inbound_order_filled;
+  let currencyPair = req.body.currencyPair;
  // console.log('Received all Data', transaction_id, openingPrice, closingPrice, high, low, volume);
-  Data.findOne({ transaction_id: transaction_id}).then(data => {
+  Data.findOne({ trans_id: trans_id}).then(data => {
     if (data) {
       return res.status(400).json({ transaction_id: "This entry is already exists" });
     } else {
         // @ Dummy Field to save data in Mongo DB 
       const newData = new Data({
-        transaction_id: transaction_id,
-        openingPrice: openingPrice,
-        closingPrice: closingPrice,
-        high: high,
-        low: low,
-        volume: volume
+        trans_id: trans_id,
+        fill_qty: fill_qty,
+        fill_price: fill_price,
+        fill_flags: fill_flags,
+        inbound_order_filled: inbound_order_filled,
+        currencyPair: currencyPair
       });
-          newData
+           newData
             .save()
             .then(data => res.json(data))
             res.redirect('/')
@@ -141,6 +162,25 @@ app.post('/data/add', (req,res,next)=>{
 });
 
   app.listen(PORT, () => {
-   console.log(`Listening on port ${PORT}`);
+   devURL();
  });
+
+  //  @ Function generate Dev URL
+  const devURL=() => {
+    Object.keys(ifaces).forEach( (ifname) =>{
+      var alias = 0;
+      ifaces[ifname].forEach( (iface) => {
+        if ('IPv4' !== iface.family || iface.internal !== false) {
+          return;
+        }
+        if (alias >= 1) {
+        } else {
+          var url = 'http://'+iface.address+':'+PORT+'/'
+          console.log(`Dev URL: `,url);
+        }
+        ++alias;
+      });
+    });
+  }
+
 

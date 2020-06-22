@@ -3,27 +3,27 @@
 <form method="POST" action="/data/add">
   <div class="form-group">
     <label>Transaction ID</label>
-    <input type="text" name="transaction_id" class="form-control" placeholder="Add ID">
+    <input type="text" name="trans_id" class="form-control" placeholder="Add ID">
   </div>
   <div class="form-group">
-    <label>Opening Price</label>
-    <input type="number" name="openingPrice" class="form-control" placeholder="Opening Price">
+    <label>Fill Quantity</label>
+    <input type="number" name="fill_qty" class="form-control" placeholder="Fill Quantity">
   </div>
   <div class="form-group">
-    <label>Closing Price</label>
-    <input type="number" name="closingPrice" class="form-control" placeholder="Closing Price">
+    <label>Fill Price</label>
+    <input type="number" name="fill_price" class="form-control" placeholder="Fill Price">
   </div>
   <div class="form-group">
-    <label>High</label>
-    <input type="number" name="high" class="form-control" placeholder="High">
+    <label>Fill Flags</label>
+    <input type="number" name="fill_flags" class="form-control" placeholder="Fill Flags">
   </div>
   <div class="form-group">
-    <label>Low</label>
-    <input type="number" name="low" class="form-control" placeholder="Low">
+    <label>Inbound Order Filled</label>
+    <input type="text" name="inbound_order_filled" class="form-control" placeholder="Inbound Order Filled">
   </div>
     <div class="form-group">
-    <label>Volume</label>
-    <input type="number" name="volume" class="form-control" placeholder="Volume">
+    <label>Currency Pair</label>
+    <input type="text" name="currencyPair" class="form-control" placeholder="Currency Pair">
   </div>
   <input type="submit" class="btn btn-primary" value="Save">
 </form>

@@ -3,31 +3,31 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const DataSchema = new Schema({
-  transaction_id: {
+  trans_id: {
     type: String,
     required: true
   },
-  openingPrice: {
+  fill_qty: {
     type: Number,
     required: true
   },
-  closingPrice: {
+  fill_price: {
     type: Number,
     required: true
   },
-  high: {
+  fill_flags: {
     type: Number,
     required: true
   },
-  low: {
-    type: Number,
+  inbound_order_filled: {
+    type: Boolean,
+    default: false
+  },
+  currencyPair: {
+    type: String,
     required: true
   },
-  volume: {
-    type: Number,
-    required: true
-  },
-  date: {
+  lastModifiedDate: {
     type: Date,
     default: Date.now
   }
